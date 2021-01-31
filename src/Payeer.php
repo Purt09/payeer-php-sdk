@@ -1,5 +1,6 @@
 <?php
 
+namespace Purt09\Payeer;
 
 class Payeer
 {
@@ -22,29 +23,74 @@ class Payeer
 
     public function getSign(array $params): string
     {
+        array_unshift($params, $this->merchant_id);
+        $params[] = $this->secret_key;
         return strtoupper(hash('sha256', implode(':', $params)));
     }
 
-    public function create(string $m_orderid, float $m_amount, string $m_desc, string $m_curr = 'RUB')
+    public function getAmount(float $amount)
     {
-        $m_desc = base64_encode($m_desc);
+        return number_format($amount, 2, '.', '');
+    }
+
+    public function generateLink(string $m_orderid, float $m_amount, string $m_desc, string $m_curr = 'RUB', string $lang = 'ru')
+    {
         $arHash = [
-            $this->merchant_id,
             $m_orderid,
-            $m_amount,
+            $this->getAmount($m_amount),
             $m_curr,
-            $m_desc,
-            $this->secret_key
+            $this->getDesc($m_desc),
         ];
         $arGetParams = array(
-            $this->merchant_id,
+            'm_shop' => $this->merchant_id,
             'm_orderid' => $m_orderid,
-            'm_amount' => $m_amount,
+            'm_amount' => $this->getAmount($m_amount),
             'm_curr' => $m_curr,
-            'm_desc' => $m_desc,
+            'm_desc' => $this->getDesc($m_desc),
             'm_sign' => $this->getSign($arHash),
+            'lang' => $lang
         );
 
         return self::LINK.http_build_query($arGetParams);
+    }
+
+    public function getDesc(string $desc): string
+    {
+        return base64_encode($desc);
+    }
+
+    public function checkSign(array $request): bool
+    {
+        if (isset($request['m_operation_id']) && isset($request['m_sign']))
+        {
+            $arHash = array(
+                $request['m_operation_id'],
+                $request['m_operation_ps'],
+                $request['m_operation_date'],
+                $request['m_operation_pay_date'],
+                $request['m_shop'],
+                $request['m_orderid'],
+                $request['m_amount'],
+                $request['m_curr'],
+                $request['m_desc'],
+                $request['m_status']
+            );
+
+            if (isset($request['m_params']))
+            {
+                $arHash[] = $request['m_params'];
+            }
+
+            $arHash[] = $this->secret_key;
+
+            if ($request['m_sign'] == $this->getSign($arHash) && $request['m_status'] == 'success')
+            {
+                ob_end_clean();
+                return true;
+            }
+
+            ob_end_clean();
+        }
+        return false;
     }
 }

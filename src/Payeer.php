@@ -92,7 +92,7 @@ class Payeer
             {
                 return true;
             }
-            return false;
         }
+        return false;
     }
 }

@@ -9,3 +9,6 @@
 Fill in the information in PayeerTest
 
     $ php vendor/bin/phpunit --bootstrap vendor/autoload.php tests/unit/PayeerTest.php
+
+or
+    "vendor/bin/phpunit" --bootstrap vendor/autoload.php tests/unit/PayeerTest.php

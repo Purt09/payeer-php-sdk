@@ -25,6 +25,11 @@ class Payeer
     {
         array_unshift($params, $this->merchant_id);
         $params[] = $this->secret_key;
+        return $this->hash($params); ;
+    }
+
+    public function hash(array $params): string
+    {
         return strtoupper(hash('sha256', implode(':', $params)));
     }
 
@@ -83,14 +88,12 @@ class Payeer
 
             $arHash[] = $this->secret_key;
 
-            if ($request['m_sign'] == $this->getSign($arHash) && $request['m_status'] == 'success')
+            ob_end_clean();
+            if ($request['m_sign'] == $this->hash($arHash) && $request['m_status'] == 'success')
             {
-                ob_end_clean();
                 return true;
             }
-
-            ob_end_clean();
+            return false;
         }
-        return false;
     }
 }

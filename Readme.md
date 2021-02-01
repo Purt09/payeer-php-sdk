@@ -1,7 +1,7 @@
 # simple payeer sdk
 
 ## Install
-    composer require purt09/payeer-php-sdk:dev-master
+    composer require purt09/payeer
 ## Unit testing
 ### Install in your local
     $ composer install

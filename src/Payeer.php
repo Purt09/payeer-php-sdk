@@ -88,7 +88,6 @@ class Payeer
 
             $arHash[] = $this->secret_key;
 
-            ob_end_clean();
             if ($request['m_sign'] == $this->hash($arHash) && $request['m_status'] == 'success')
             {
                 return true;

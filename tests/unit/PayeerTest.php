@@ -8,8 +8,8 @@ use Purt09\Payeer\Payeer;
 
 class PayeerTest extends TestCase
 {
-    private $merchant_id = 1;
-    private $secret_key = '123';
+    private $merchant_id = 1147929546;
+    private $secret_key = 'EC23E85416F4AB3045A88D45EC071683';
 
     public function testGetDesc(): void
     {
@@ -33,6 +33,18 @@ class PayeerTest extends TestCase
             $payeer->getDesc('123'),
         ];
         $this->assertEquals('F58357124F326853A91EE698EB13CE81B2245BB516CFC9F673AC7EF67ACDD182', $payeer->getSign($arHash));
+    }
+
+    public function testGetNotSign(): void
+    {
+        $payeer = new Payeer($this->merchant_id, $this->secret_key);
+        $arHash = [
+            1234,
+            number_format(150, 2, '.', ''),
+            'RUB',
+            $payeer->getDesc('123'),
+        ];
+        $this->assertNotEquals('F58357124F326853A91EE698EB13CE81B2245BB516CFC9F673AC7EF67ACDD182', $payeer->getSign($arHash));
     }
 
 

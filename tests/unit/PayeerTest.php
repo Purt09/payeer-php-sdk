@@ -9,7 +9,7 @@ use Purt09\Payeer\Payeer;
 class PayeerTest extends TestCase
 {
     private $merchant_id = 1147929546;
-    private $secret_key = 'EC23E85416F4AB3045A88D45EC071683';
+    private $secret_key = 'asd';
 
     public function testGetDesc(): void
     {
